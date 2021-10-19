@@ -13,6 +13,8 @@
         <module>Friday-Tools</module>
         <module>Friday-Algorithm</module>
         <module>Friday-Concept</module>
+        <module>Friday-Coding</module>
+        <module>Coding</module>
     </modules>
 
     <properties>
