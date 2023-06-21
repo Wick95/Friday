@@ -1,4 +1,5 @@
-Author:Matt Liu
+Author:Matt Liu <br/>
+
 ##Homebrew是一款包管理工具
 目前支持macOS和linux系统。主要有四个部分组成: 
 brew、homebrew-core 、homebrew-cask、homebrew-bottles。

@@ -30,28 +30,26 @@ public class Application {
 //                innerList.add(primaryValue);
 
 
-        File file2022 = new File("/Users/liubojin/Desktop/2022.xlsx");
+        File file2022 = new File("/Users/liubojin/Desktop/数据计算处理0619/2022.xlsx");
         List<List<String>> excelList2022 = ReadExcelFragment.readBigExcelAll(file2022);
         excelList2022.remove(0);
 
-        File file2011 = new File("/Users/liubojin/Desktop/2011.xlsx");
+        File file2011 = new File("/Users/liubojin/Desktop/数据计算处理0619/2011.xlsx");
         List<List<String>> excelList2011 = ReadExcelFragment.readBigExcelAll(file2011);
         excelList2011.remove(0);
 
-        File zhong2011 = new File("/Users/liubojin/Desktop/2011z.xlsx");
+        File zhong2022 = new File("/Users/liubojin/Desktop/数据计算处理0619/2022z.xlsx");
+        List<List<String>> zhong2022List = ReadExcelFragment.readBigExcelAll(zhong2022);
+        List<String> title = zhong2022List.get(0);
+        zhong2022List.remove(0);
+
+        File zhong2011 = new File("/Users/liubojin/Desktop/数据计算处理0619/2011z.xlsx");
         List<List<String>> zhong2011List = ReadExcelFragment.readBigExcelAll(zhong2011);
         zhong2011List.remove(0);
 
-        File zhong2022 = new File("/Users/liubojin/Desktop/2022中国数据处理结果.xlsx");
-        List<List<String>> zhong2022List = ReadExcelFragment.readBigExcelAll(zhong2022);
-        List<String> title = zhong2022List.get(0);
-        title.add("rateForAllCountry");
-        title.add("rateForAllCountryDiffWith2011");
-        zhong2022List.remove(0);
-
-        File hsMapping = new File("/Users/liubojin/Desktop/HS2022toHS2007Conversion.xlsx");
+        File hsMapping = new File("/Users/liubojin/Desktop/数据计算处理0619/HS2022toHS2007Conversion.xlsx");
         HashMap<String, List<List<String>>> hsMappingData = ReadExcelFragment.readBigExcelAllBySheet(hsMapping);
-        List<List<String>> hsMappingDataList = hsMappingData.get("HS2022-HS2007 Conversions");
+        List<List<String>> hsMappingDataList = hsMappingData.get("HS2022-HS2007");
         Map<String, List<String>> hsMappingMap = hsMappingDataList.stream().collect(Collectors.toMap(ele -> ele.get(0), ele -> ele, (k1, k2) -> k2));
 
 
@@ -69,11 +67,20 @@ public class Application {
         HashMap<String, BigDecimal> all2022MapExport = new HashMap<>();
         for (List<String> row : excelList2022) {
             String hs3Code = hsMappingMap.get(row.get(cmdCodePosition)) == null ? "" : hsMappingMap.get(row.get(cmdCodePosition)).get(1);
+            BigDecimal primaryValue = new BigDecimal(row.get(cmdValuePosition));
 
             if (row.get(flowDesPosition).equals("Import")) {
-                all2022MapImport.put(hs3Code, new BigDecimal(row.get(cmdValuePosition)));
+                if (all2022MapImport.containsKey(hs3Code)) {
+                    primaryValue = primaryValue.add(all2022MapImport.get(hs3Code));
+                }
+                all2022MapImport.put(hs3Code, primaryValue);
+
             } else if (row.get(flowDesPosition).equals("Export")) {
-                all2022MapExport.put(hs3Code, new BigDecimal(row.get(cmdValuePosition)));
+
+                if (all2022MapExport.containsKey(hs3Code)) {
+                    primaryValue = primaryValue.add(all2022MapExport.get(hs3Code));
+                }
+                all2022MapExport.put(hs3Code, primaryValue);
             }
         }
 
@@ -95,11 +102,20 @@ public class Application {
 
         for (List<String> row : zhong2022List) {
             String hs3Code = hsMappingMap.get(row.get(cmdCodePosition)) == null ? "" : hsMappingMap.get(row.get(cmdCodePosition)).get(1);
+            BigDecimal primaryValue = new BigDecimal(row.get(cmdValuePosition));
 
             if (row.get(flowDesPosition).equals("Import")) {
-                zhong2022MapImport.put(hs3Code, new BigDecimal(row.get(cmdValuePosition)));
+                if (zhong2022MapImport.containsKey(hs3Code)) {
+                    primaryValue = primaryValue.add(zhong2022MapImport.get(hs3Code));
+                }
+                zhong2022MapImport.put(hs3Code, primaryValue);
+
             } else if (row.get(flowDesPosition).equals("Export")) {
-                zhong2022MapExport.put(hs3Code, new BigDecimal(row.get(cmdValuePosition)));
+
+                if (zhong2022MapExport.containsKey(hs3Code)) {
+                    primaryValue = primaryValue.add(zhong2022MapExport.get(hs3Code));
+                }
+                zhong2022MapExport.put(hs3Code, primaryValue);
             }
         }
 
@@ -146,7 +162,7 @@ public class Application {
             }
         }
 
-        File mappingFile = new File("/Users/liubojin/Desktop/数据示例及对应关系.xlsx");
+        File mappingFile = new File("/Users/liubojin/Desktop/数据计算处理0619/数据示例及对应关系.xlsx");
         HashMap<String, List<List<String>>> mappingData = ReadExcelFragment.readBigExcelAllBySheet(mappingFile);
 
         //处理hs6对应bec4
@@ -157,7 +173,7 @@ public class Application {
         Map<String, List<String>> hs3ToBec4Map = hs3ToBec4.stream().collect(Collectors.toMap(ele -> ele.get(0), ele -> ele, (k1, k2) -> k2));
 
         //处理hs6对应isic3
-        List<List<String>> hs6ToIsic3 = mappingData.get("HS6对应isic3");
+        List<List<String>> hs6ToIsic3 = mappingData.get("hs6对应isic3");
         Map<String, List<String>> hs6ToIsic3Map = hs6ToIsic3.stream().collect(Collectors.toMap(ele -> ele.get(0), ele -> ele, (k1, k2) -> k2));
         //处理hs3对应isic3
         List<List<String>> hs3ToIsic3 = mappingData.get("hs3对应isic3");
@@ -261,7 +277,7 @@ public class Application {
         HashMap<String, List<List<String>>> fileContent = new HashMap<>();
         fileContent.put("2011年中国数据计算结果", zhong2011List);
 
-        writeBigExcel("/Users/liubojin/Desktop/2011年中国数据计算结果-1.xlsx", fileContent);
+        writeBigExcel("/Users/liubojin/Desktop/2011年中国数据计算结果.xlsx", fileContent);
 
         System.out.println(123);
 
