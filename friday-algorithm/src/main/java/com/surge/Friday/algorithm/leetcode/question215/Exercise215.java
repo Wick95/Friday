@@ -1,4 +1,4 @@
-package com.surge.Friday.algorithm.leetcode;
+package com.surge.Friday.algorithm.leetcode.question215;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

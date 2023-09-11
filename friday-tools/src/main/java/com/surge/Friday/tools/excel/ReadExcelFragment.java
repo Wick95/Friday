@@ -167,8 +167,10 @@ public class ReadExcelFragment {
             XSSFSheet sheet = workbook.createSheet(sheetContent.getKey());
 
             List<List<String>> value = sheetContent.getValue();
-            for (int i = 0; i < value.size(); i++) {
-                List<String> rowContent = value.get(i);
+            int maxCount = value.size();
+            for (int i = 0; i < maxCount; i++) {
+                List<String> rowContent = value.get(0);
+                value.remove(0);
                 XSSFRow row = sheet.createRow(i);
                 for (int j = 0; j < rowContent.size(); j++) {
                     row.createCell(j).setCellValue(rowContent.get(j));

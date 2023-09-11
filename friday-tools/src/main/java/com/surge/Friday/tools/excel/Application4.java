@@ -25,7 +25,7 @@ public class Application4 {
 
         String[] countrySet = new String[]{"China", "France", "Germany", "India", "Italy", "Japan", "Mexico", "Netherlands", "United Kingdom", "USA"};
 
-        String targetYear = "1992";
+        String targetYear = "2017";
 
         for (String country : countrySet) {
             tempVersion(country, targetYear);
@@ -35,13 +35,12 @@ public class Application4 {
     private static void tempVersion(String targetCountry, String targetYear) throws Exception {
         String[] countrySet = new String[]{"China", "France", "Germany", "India", "Italy", "Japan", "Mexico", "Netherlands", "United Kingdom", "USA"};
 
-        String baseUrl = "/Users/liubojin/Downloads/数据处理0624/";
-        String[] yearSet = new String[]{"2022-2011", "2010-1999", "1998-1992"};
+        String baseUrl = "/Users/liubojin/IdeaProjects/Friday/friday-tools/src/main/java/com/surge/Friday/tools/excel/数据处理0624/";
+        String[] yearSet = new String[]{"2022-2011"};
         String[] transSet = new String[]{"Import", "Export"};
 
         String badStringSplit = "?,";
         String tempStringSplit = "%";
-
 
         List<List<String>> targetDataList = new ArrayList<>();
 
@@ -50,6 +49,7 @@ public class Application4 {
         Map<String, BigDecimal> totalPrimaryValueMap = new HashMap<>();
         //h0Code-年份，某一个国家primaryVlue
         Map<String, BigDecimal> primaryValueMap = new HashMap<>();
+        Map<String, List<String>> hsCodeRowMap = new HashMap<>();
 
 
         //读取HS数据
@@ -60,6 +60,7 @@ public class Application4 {
             Map<String, String> toHs0 = sheet.getValue().stream().collect(Collectors.toMap(ele -> ele.get(0), ele -> ele.get(1), (k1, k2) -> k2));
             h0CodeMap.put(sheet.getKey(), toHs0);
         }
+
         // 处理映射关系
         HashMap<String, List<List<String>>> mappingData = ReadExcelFragment.readBigExcelAllBySheet(new File(baseUrl + "数据示例及对应关系.xlsx"));
         Map<String, List<String>> hs0ToBec4Map = processMappingData(mappingData, "h0对应bec4");
@@ -68,8 +69,6 @@ public class Application4 {
         Map<String, List<String>> middle2Map = processMappingData(mappingData, "对应中间品2");
         Map<String, List<String>> categoryMap = processMappingData(mappingData, "对应大类");
 
-        //excel数据集合 国家，全量数据
-//        Map<String, List<List<String>>> excelDataMap = new HashMap<>();
 
         //加载数据
         for (String countryName : countrySet) {
@@ -78,15 +77,10 @@ public class Application4 {
                 for (String trans : transSet) {
                     List<List<String>> excelList = readExcelDataWithoutTitle(getFileUrl(baseUrl, countryName, year, trans));
                     countryData.addAll(excelList);
-//                    if (excelDataMap.containsKey(country)) {
-//                        List<List<String>> oldData = excelDataMap.get(country);
-//                        oldData.addAll(excelList);
-//                    } else {
-//                        excelDataMap.put(country, excelList);
-//
                 }
             }
             for (List<String> row : countryData) {
+
                 //1.去除乱码
                 if (row.get(30).contains(badStringSplit)) {
                     String badString = row.get(30);
@@ -105,6 +99,10 @@ public class Application4 {
                 String hsKind = row.get(hsKindPosition);
                 String hsCode = row.get(cmdCodePosition);
                 BigDecimal primaryValue = new BigDecimal(row.get(cmdValuePosition));
+
+                if (new BigDecimal(year).compareTo(new BigDecimal(targetYear)) < 0) {
+                    continue;
+                }
 
                 //2.转换H0code
                 if (!hsKind.equals("H0")) {
@@ -130,10 +128,13 @@ public class Application4 {
                         primaryValueMap.put(cashKey, primaryValue);
                     }
                 }
+                hsCodeRowMap.put(hsCode + "-" + flow, row);
 
                 //5.如果是目标年份，进行存储
-                if (country.equals(targetCountry) && year.equals(targetYear)) {
-                    targetDataList.add(row);
+                if (country.equals(targetCountry)) {
+                    if (year.equals(targetYear)) {
+                        targetDataList.add(row);
+                    }
                 }
             }
         }
@@ -149,6 +150,16 @@ public class Application4 {
         for (int i = 1992; i <= 2022; i++) {
             title.add(i + "年" + targetCountry + "PrimaryValue");
             title.add(i + "年PrimaryValue总和");
+        }
+        //6.对目标集合进行遍历
+        for (List<String> row : targetDataList) {
+            String flow = row.get(flowDesPosition);
+
+            String hsCode = row.get(cmdCodePosition);
+            hsCodeRowMap.remove(hsCode + "-" + flow);
+        }
+        for (Map.Entry<String, List<String>> entry : hsCodeRowMap.entrySet()) {
+            targetDataList.add(entry.getValue());
         }
 
         //6.对目标集合进行遍历
@@ -197,6 +208,7 @@ public class Application4 {
                 }
             }
         }
+
         HashMap<String, List<List<String>>> fileContent = new HashMap<>();
 
         targetDataList.add(0, title);

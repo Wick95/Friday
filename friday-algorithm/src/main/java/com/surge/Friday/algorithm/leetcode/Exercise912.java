@@ -1,6 +1,6 @@
 package com.surge.Friday.algorithm.leetcode;
 
-import com.surge.Friday.algorithm.basis.sort.QuickSort;
+import com.surge.Friday.algorithm.basis.sort.quickSort.QuickSort;
 
 /**
  * <p>排序数组

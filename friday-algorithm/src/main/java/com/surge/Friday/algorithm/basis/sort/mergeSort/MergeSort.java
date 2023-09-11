@@ -1,4 +1,4 @@
-package com.surge.Friday.algorithm.basis.sort;
+package com.surge.Friday.algorithm.basis.sort.mergeSort;
 
 import com.surge.Friday.algorithm.ListNode;
 

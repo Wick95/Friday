@@ -1,4 +1,4 @@
-package com.surge.Friday.algorithm.basis.sort;
+package com.surge.Friday.algorithm.basis.sort.quickSort;
 
 /**
  * <p>快速排序：首先选取哨兵元素，然后对集合进行排序，排序后哨兵左边的元素全部小于它，右边全部大于它，再递归进行排序

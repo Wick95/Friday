@@ -1,7 +1,7 @@
 package com.surge.Friday.algorithm.leetcode;
 
 import com.surge.Friday.algorithm.ListNode;
-import com.surge.Friday.algorithm.basis.sort.MergeSort;
+import com.surge.Friday.algorithm.basis.sort.mergeSort.MergeSort;
 
 /**
  * <p>在 O(n log n) 时间复杂度和常数级空间复杂度下，对链表进行排序。
