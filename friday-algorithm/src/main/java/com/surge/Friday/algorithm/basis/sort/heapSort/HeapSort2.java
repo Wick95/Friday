@@ -1,4 +1,4 @@
-package com.surge.Friday.algorithm.basis.sort.bubbleSort.heapSort;
+package com.surge.Friday.algorithm.basis.sort.heapSort;
 
 import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
 
